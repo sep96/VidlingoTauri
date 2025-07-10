@@ -2,10 +2,6 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 use ffmpeg_next as ffmpeg;
 
-fn main() {
-    vidlingo_lib::run()
-}
-
 #[tauri::command]
 fn get_ffmpeg_version() -> String {
     ffmpeg::init().unwrap();
