@@ -1,7 +1,7 @@
 // src/App.tsx
 import { useState, useEffect, useRef } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
-import { listen, Event } from '@tauri-apps/api/event';
+import { listen } from '@tauri-apps/api/event';
 import { open } from '@tauri-apps/api/dialog';
 import './App.css';
 
