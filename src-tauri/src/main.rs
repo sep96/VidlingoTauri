@@ -91,6 +91,7 @@ fn process_video(window: Window, path: String) -> Result<(), ffmpeg::Error> {
 
 fn main() {
   tauri::Builder::default()
+    .plugin(tauri_plugin_dialog::init())
     .invoke_handler(tauri::generate_handler![start_playback])
     .run(tauri::generate_context!())
     .expect("error while running tauri application");
