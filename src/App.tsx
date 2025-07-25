@@ -1,69 +1,78 @@
+// src/App.tsx
+import { useState, useEffect, useRef } from 'react';
+import { invoke } from '@tauri-apps/api/tauri';
+import { listen, Event } from '@tauri-apps/api/event';
+import { open } from '@tauri-apps/api/dialog';
+import './App.css';
 
-import { useState, useEffect } from "react";
-import reactLogo from "./assets/react.svg";
-
-import { invoke } from "@tauri-apps/api/tauri";
-import "./App.css";
+interface VideoInfo {
+  width: number;
+  height: number;
+}
 
 function App() {
-  const [greetMsg, setGreetMsg] = useState("");
-  const [name, setName] = useState("");
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [videoPath, setVideoPath] = useState<string | null>(null);
 
-  const [ffmpegVersion, setFfmpegVersion] = useState("");
-
-  
   useEffect(() => {
-    
-    invoke<string>("get_ffmpeg_version")
-      .then((version) => {
-       
-        setFfmpegVersion(version);
-      })
-      .catch(console.error); 
-  }, []); 
-  async function greet() {
-    setGreetMsg(await invoke("greet", { name }));
-  }
+    let unlistenInfo: (() => void) | undefined;
+    let unlistenFrame: (() => void) | undefined;
+
+    async function setupListeners() {
+      // شنونده برای دریافت اطلاعات اولیه ویدیو (ابعاد)
+      unlistenInfo = await listen<VideoInfo>('video_info', (event) => {
+        const { width, height } = event.payload;
+        const canvas = canvasRef.current;
+        if (canvas) {
+          canvas.width = width;
+          canvas.height = height;
+        }
+      });
+
+      // شنونده برای دریافت فریم‌های جدید
+      unlistenFrame = await listen<number[]>('new_frame', (event) => {
+        const canvas = canvasRef.current;
+        if (!canvas) return;
+
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+
+        // داده‌های فریم را به فرمت مناسب برای canvas تبدیل و نمایش می‌دهیم
+        const frameData = new Uint8ClampedArray(event.payload);
+        const imageData = new ImageData(frameData, canvas.width, canvas.height);
+        ctx.putImageData(imageData, 0, 0);
+      });
+    }
+
+    setupListeners();
+
+    // پاک‌سازی شنونده‌ها زمانی که کامپوننت از بین می‌رود
+    return () => {
+      unlistenInfo?.();
+      unlistenFrame?.();
+    };
+  }, []);
+
+  const handleOpenFile = async () => {
+    const path = await open({
+      multiple: false,
+      filters: [{ name: 'Video', extensions: ['mp4', 'mkv', 'avi', 'mov'] }],
+    });
+
+    if (typeof path === 'string') {
+      setVideoPath(path);
+      // فراخوانی کامند بک‌اند برای شروع پردازش ویدیو
+      await invoke('start_playback', { videoPath: path });
+    }
+  };
 
   return (
-    <main className="container">
-      <h1>Welcome to Tauri + React</h1>
-
-      <div className="row">
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo vite" alt="Vite logo" />
-        </a>
-        <a href="https://tauri.app" target="_blank">
-          <img src="/tauri.svg"className="logo tauri" alt="Tauri logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      
-      {/* 4. نتیجه را اینجا نمایش می‌دهیم */}
-      <p>
-        <strong>FFmpeg Version:</strong> {ffmpegVersion || "Loading..."}
-      </p>
-
-      <p>Click on the Tauri, Vite, and React logos to learn more.</p>
-
-      <form
-        className="row"
-        onSubmit={(e) => {
-          e.preventDefault();
-          greet();
-        }}
-      >
-        <input
-          id="greet-input"
-          onChange={(e) => setName(e.currentTarget.value)}
-          placeholder="Enter a name..."
-        />
-        <button type="submit">Greet</button>
-      </form>
-      <p>{greetMsg}</p>
-    </main>
+    <div className="container">
+      <h1>Tauri + React + FFmpeg Video Player 🎬</h1>
+      <canvas ref={canvasRef} id="video-canvas"></canvas>
+      <button onClick={handleOpenFile}>Open and Play Video</button>
+      {videoPath && <p>Now Playing: {videoPath}</p>}
+    </div>
   );
 }
 
