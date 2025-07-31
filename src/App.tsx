@@ -1,6 +1,4 @@
-// In src/App.tsx
-
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { invoke } from '@tauri-apps/api/tauri';
 
 function App() {
@@ -14,6 +12,8 @@ function App() {
       const response = await invoke<string>('install_ffmpeg');
       setStatus(response);
     } catch (error) {
+      // It's good practice to log the actual error for debugging
+      console.error(error);
       setStatus(`Installation failed: ${error}`);
     } finally {
       setIsLoading(false);
