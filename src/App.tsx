@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { invoke } from '@tauri-apps/api/tauri';
+// import { invoke } from '@tauri-apps/api/tauri';
+// import { VideoPlayer } from './Player';
 
 function App() {
   const [status, setStatus] = useState<string>('');
@@ -8,16 +9,16 @@ function App() {
   const handleInstall = async () => {
     setIsLoading(true);
     setStatus('Installing FFmpeg, please wait...');
-    try {
-      const response = await invoke<string>('install_ffmpeg');
-      setStatus(response);
-    } catch (error) {
-      // It's good practice to log the actual error for debugging
-      console.error(error);
-      setStatus(`Installation failed: ${error}`);
-    } finally {
-      setIsLoading(false);
-    }
+    // try {
+    //   const response = await invoke<string>('install_ffmpeg');
+    //   setStatus(response);
+    // } catch (error) {
+    //   // It's good practice to log the actual error for debugging
+    //   console.error(error);
+    //   setStatus(`Installation failed: ${error}`);
+    // } finally {
+    //   setIsLoading(false);
+    // }
   };
 
   return (
