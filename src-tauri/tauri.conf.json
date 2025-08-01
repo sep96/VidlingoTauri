@@ -1,14 +1,54 @@
 {
-  "productName": "Vidlingo",
-  "version": "0.1.0",
-  "identifier": "com.vidlingo.app",
+  "$schema": "../gen/schemas/config.schema.json",
+  "package": {
+    "productName": "Vidlingo",
+    "version": "0.1.0"
+  },
   "build": {
     "beforeDevCommand": "npm run dev",
     "beforeBuildCommand": "npm run build",
-    "frontendDist": "../dist",
-    "devUrl": "http://localhost:1420"
+    "distDir": "../dist",
+    "devPath": "http://localhost:1420"
   },
-  "app": {
+  "tauri": {
+    "bundle": {
+      "active": true,
+      "category": "DeveloperTool",
+      "copyright": "",
+      "identifier": "com.vidlingo.app",
+      "externalBin": [],
+      "icon": [
+        "icons/32x32.png",
+        "icons/128x128.png",
+        "icons/128x128@2x.png",
+        "icons/icon.icns",
+        "icons/icon.ico"
+      ],
+      "longDescription": "",
+      "macOS": {
+        "entitlements": null,
+        "exceptionDomain": "",
+        "frameworks": [],
+        "providerShortName": null,
+        "signingIdentity": null
+      },
+      "resources": [],
+      "shortDescription": "",
+      "targets": "all",
+      "windows": {
+        "certificateThumbprint": null,
+        "digestAlgorithm": "sha256",
+        "timestampUrl": "",
+        "wix": {
+          "language": "en-US"
+        }
+      },
+      "linux": {
+        "deb": {
+          "depends": []
+        }
+      }
+    },
     "windows": [
       {
         "title": "Vidlingo",
@@ -20,54 +60,25 @@
     ],
     "security": {
       "csp": null
-    }
-  },
-  "bundle": {
-    "active": true,
-    "category": "DeveloperTool",
-    "copyright": "",
-    "externalBin": [],
-    "icon": [
-      "icons/32x32.png",
-      "icons/128x128.png",
-      "icons/128x128@2x.png",
-      "icons/icon.icns",
-      "icons/icon.ico"
-    ],
-    "longDescription": "",
-    "macOS": {
-      "entitlements": null,
-      "exceptionDomain": "",
-      "frameworks": [],
-      "providerShortName": null,
-      "signingIdentity": null
     },
-    "resources": [],
-    "shortDescription": "",
-    "targets": "all",
-    "windows": {
-      "certificateThumbprint": null,
-      "digestAlgorithm": "sha256",
-      "timestampUrl": "",
-      "wix": {
-        "language": "en-US"
+    "allowlist": {
+      "all": false,
+      "shell": {
+        "all": false,
+        "open": true
+      },
+      "fs": {
+        "all": true,
+        "scope": ["$APPDATA/*", "C:\\ffmpeg\\**", "**"]
+      },
+      "http": {
+        "all": true,
+        "request": true,
+        "scope": ["https://github.com/*", "https://www.gyan.dev/*", "https://**"]
+      },
+      "path": {
+        "all": true
       }
-    },
-    "linux": {
-      "deb": {
-        "depends": []
-      }
-    }
-  },
-  "plugins": {
-    "shell": {
-      "open": true
-    },
-    "fs": {
-      "scope": ["$APPDATA/*", "C:\\ffmpeg\\**"]
-    },
-    "http": {
-      "scope": ["https://github.com/*"]
     }
   }
 }

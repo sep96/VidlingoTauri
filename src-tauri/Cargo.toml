@@ -1,17 +1,19 @@
 [package]
-name = "Vidlingo"
+name = "vidlingo"
 version = "0.1.0"
-description = "Vidlingo"
-authors = ["you"]
+authors = ["Your Name <your.email@example.com>"]
 edition = "2021"
+description = "Your app description"
+license = "MIT"
+identifier = "com.vidlingo.app"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [build-dependencies]
-tauri-build = { version = "1", features = [] }
+tauri-build = { version = "1.4.1", features = [] }
 
 [dependencies]
-tauri = { version = "1.0", features = [ "http-all", "fs-all", "path-all", "shell-open"] }
+tauri = { version = "1.4.1", features = [ "http-all", "fs-all", "path-all", "shell-open"] }
 reqwest = { version = "0.11", features = ["stream", "json"] }
 zip = "0.6"
 futures-util = "0.3"
@@ -20,7 +22,7 @@ serde_json = "1.0"
 winapi = { version = "0.3", features = ["winuser", "minwindef"] }
 winreg = "0.10"
 dirs = "4.0"
-
+kuchikiki = "0.8.2"
 
 [features]
 # This feature is used for production builds or when a dev server is not specified, DO NOT REMOVE!!
